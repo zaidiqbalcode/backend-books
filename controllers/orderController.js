@@ -3,29 +3,27 @@ const Book = require('../models/Book');
 
 // @desc    Create new order
 // @route   POST /api/orders
-// @access  Private
+// @access  Public (Guest checkout allowed)
 exports.createOrder = async (req, res) => {
   try {
-    const { books, totalAmount, customerDetails } = req.body;
+    const { books, totalAmount, customerDetails, paymentId, transactionId } = req.body;
 
     if (!books || books.length === 0) {
       return res.status(400).json({ message: 'No order items' });
     }
 
-    // Verify books exist and prices
-    const bookIds = books.map((item) => item.book);
-    const foundBooks = await Book.find({ _id: { $in: bookIds } });
-
-    if (foundBooks.length !== books.length) {
-      return res.status(400).json({ message: 'Some books not found' });
+    if (!customerDetails || !customerDetails.fullName || !customerDetails.email) {
+      return res.status(400).json({ message: 'Customer details are required' });
     }
 
-    // Create order
+    // Create order (user is optional for guest checkout)
     const order = await Order.create({
-      user: req.user._id,
+      user: req.user?._id || null, // null for guest orders
       books,
       totalAmount,
       customerDetails,
+      paymentId: paymentId || 'ORDER_' + Date.now(),
+      transactionId: transactionId || '',
       status: 'pending',
     });
 

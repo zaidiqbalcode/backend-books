@@ -8,7 +8,8 @@ const {
 } = require('../controllers/orderController');
 const { protect } = require('../middleware/authMiddleware');
 
-router.post('/', protect, createOrder);
+// Public route - no authentication required for guest checkout
+router.post('/', createOrder);
 router.get('/my-orders', protect, getMyOrders);
 router.get('/:id', protect, getOrder);
 router.put('/:id', protect, updateOrder);
