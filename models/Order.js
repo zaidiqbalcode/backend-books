@@ -19,11 +19,12 @@ const orderSchema = new mongoose.Schema(
     books: [
       {
         book: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Book',
-          required: true,
+          type: String, // Changed from ObjectId to String for dummy data compatibility
+          required: false,
         },
         title: { type: String, required: true },
+        author: { type: String, required: false },
+        image: { type: String, required: false },
         price: { type: Number, required: true },
         quantity: { type: Number, required: true, default: 1 },
       },
