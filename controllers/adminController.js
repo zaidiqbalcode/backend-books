@@ -16,9 +16,9 @@ exports.getDashboardStats = async (req, res) => {
     // Total orders
     const totalOrders = await Order.countDocuments();
 
-    // Total revenue
+    // Total revenue - include all pending and completed orders
     const revenueData = await Order.aggregate([
-      { $match: { status: { $in: ['paid', 'processing', 'delivered'] } } },
+      { $match: { status: { $in: ['pending', 'completed', 'paid', 'processing', 'delivered'] } } },
       {
         $group: {
           _id: null,
@@ -54,7 +54,7 @@ exports.getDashboardStats = async (req, res) => {
       {
         $match: {
           createdAt: { $gte: sixMonthsAgo },
-          status: { $in: ['paid', 'processing', 'delivered'] },
+          status: { $in: ['pending', 'completed', 'paid', 'processing', 'delivered'] },
         },
       },
       {
